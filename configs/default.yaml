@@ -1,0 +1,53 @@
+# Default configuration for plant disease classification
+# Hyperparameters for training lightweight CNNs on greenhouse plant disease data
+
+# Data
+data:
+  image_size: 224
+  num_workers: 4
+  pin_memory: true
+
+# Training
+training:
+  batch_size: 32
+  epochs: 50
+  precision: "fp16"  # Mixed Precision (FP16) for memory efficiency
+
+# Optimizer: AdamW
+optimizer:
+  name: "adamw"
+  lr: 0.001
+  weight_decay: 0.05
+
+# Loss: Label Smoothing Cross-Entropy
+loss:
+  name: "cross_entropy"
+  label_smoothing: 0.1
+
+# Scheduler: Cosine Annealing with Warm Restarts
+scheduler:
+  name: "cosine_annealing_warm_restarts"
+  T_0: 10
+  T_mult: 2
+  eta_min: 1.0e-6
+
+# Models available for training
+models:
+  - mobilenetv4_conv_small
+  - convnextv2_nano
+  - ghostnetv3
+
+# Evaluation targets
+targets:
+  top1_accuracy: 0.92
+  macro_f1: 0.88
+  inference_latency_ms: 30
+  throughput_imgs_per_sec: 100
+  model_size_mb: 10
+  gflops: 1.0
+
+# Output paths
+output:
+  checkpoint_dir: "outputs/checkpoints"
+  log_dir: "outputs/logs"
+  figure_dir: "outputs/figures"
