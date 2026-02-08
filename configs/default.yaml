@@ -46,6 +46,28 @@ targets:
   model_size_mb: 10
   gflops: 1.0
 
+# Augmentation
+augmentation:
+  clahe:
+    clip_limit: 2.0
+    tile_grid_size: [8, 8]
+  horizontal_flip_p: 0.5
+  vertical_flip_p: 0.5
+  rotate90_p: 0.5
+  shift_scale_rotate:
+    shift_limit: 0.1
+    scale_limit: 0.15
+    rotate_limit: 15
+    p: 0.5
+  color_jitter:
+    brightness: 0.2
+    contrast: 0.2
+    saturation: 0.2
+    hue: 0.1
+    p: 0.5
+  gauss_noise_p: 0.3
+  gaussian_blur_p: 0.2
+
 # Output paths
 output:
   checkpoint_dir: "outputs/checkpoints"

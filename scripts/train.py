@@ -13,15 +13,13 @@ import time
 import torch
 import torch.nn as nn
 from torch.cuda.amp import GradScaler, autocast
-from torch.utils.data import DataLoader
 from tqdm import tqdm
 import yaml
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from data.dataset import PlantDiseaseDataset
-from data.transforms import get_train_transforms, get_val_transforms
+from data import create_dataloaders
 from models import get_model
 from utils.metrics import compute_accuracy, compute_macro_f1
 
@@ -122,32 +120,10 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Data
-    train_transform = get_train_transforms(cfg["data"]["image_size"])
-    val_transform = get_val_transforms(cfg["data"]["image_size"])
-
-    train_dataset = PlantDiseaseDataset(
-        os.path.join(args.data_dir, "train"), transform=train_transform
-    )
-    val_dataset = PlantDiseaseDataset(
-        os.path.join(args.data_dir, "val"), transform=val_transform
-    )
-
-    num_classes = len(train_dataset.classes)
-
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=cfg["training"]["batch_size"],
-        shuffle=True,
-        num_workers=cfg["data"]["num_workers"],
-        pin_memory=cfg["data"]["pin_memory"],
-    )
-    val_loader = DataLoader(
-        val_dataset,
-        batch_size=cfg["training"]["batch_size"],
-        shuffle=False,
-        num_workers=cfg["data"]["num_workers"],
-        pin_memory=cfg["data"]["pin_memory"],
-    )
+    data = create_dataloaders(args.data_dir, cfg)
+    train_loader = data["train_loader"]
+    val_loader = data["val_loader"]
+    num_classes = data["num_classes"]
 
     # Model
     model = get_model(args.model, num_classes=num_classes, pretrained=True)

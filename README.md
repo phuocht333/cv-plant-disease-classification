@@ -129,7 +129,45 @@ Báo cáo cuối cùng cần trình bày được các kết quả đầu ra sau
     * Vẽ biểu đồ Trade-off: Trục tung là Accuracy, trục hoành là Latency.
     * Viết nhận xét: Mô hình nào tối ưu nhất?
 
-## VI. TÀI LIỆU THAM KHẢO & SOURCE CODE
+## VI. DỮ LIỆU (DATASET)
+
+**Plant Disease Detection Dataset**
+
+| Thông tin | Chi tiết |
+| :--- | :--- |
+| **Nguồn** | [Kaggle — Plant Disease Detection Dataset](https://www.kaggle.com/datasets/ironwolf437/plant-disease-detection-dataset/data) |
+| **Gốc (Original)** | [Roboflow — Plant Diseases Detection](https://universe.roboflow.com/iron-wolf-yvovn/plant-diseases-detection-imr16/dataset/2) |
+| **Tác giả** | Iron Wolf |
+| **License** | Apache 2.0 |
+| **Số lớp** | 7 |
+| **Kích thước** | ~1.82 GB |
+
+**Các lớp bệnh (7 classes):**
+
+| # | Tên lớp (Class) | Mô tả |
+| :---: | :--- | :--- |
+| 1 | Downy mildew | Sương mai |
+| 2 | Early blight | Đốm vòng sớm |
+| 3 | Gray mold | Mốc xám |
+| 4 | Green mold | Mốc xanh |
+| 5 | Late blight | Đốm vòng muộn |
+| 6 | Powdery mildew | Phấn trắng |
+| 7 | Tomato mosaic virus | Virus khảm cà chua |
+
+**Tải dữ liệu:**
+
+```bash
+# Cài đặt Kaggle CLI (nếu chưa có)
+pip install kaggle
+
+# Tải dataset
+kaggle datasets download -d ironwolf437/plant-disease-detection-dataset
+unzip plant-disease-detection-dataset.zip -d data/raw/
+```
+
+> **Ghi chú:** Dataset chứa ảnh thực tế từ môi trường nhà kính, phù hợp cho nghiên cứu phát hiện bệnh cây trồng sớm bằng Computer Vision. Tiền xử lý CLAHE được áp dụng để xử lý hiện tượng sương mù và ánh sáng LED không đều.
+
+## VII. TÀI LIỆU THAM KHẢO & SOURCE CODE
 1.  **MobileNetV4:** `timm.create_model('mobilenetv4_conv_small', ...)`
 2.  **ConvNeXt-V2:** `timm.create_model('convnextv2_nano', ...)`
 3.  **GhostNetV3:** Clone từ repo chính thức hoặc dùng bản implement trong `timm` (nếu có).

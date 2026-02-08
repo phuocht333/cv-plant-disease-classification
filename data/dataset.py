@@ -1,9 +1,13 @@
 """Custom PyTorch Dataset for greenhouse plant disease images."""
 
 import os
+from collections import Counter
 
+import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset
+
+VALID_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
 
 class PlantDiseaseDataset(Dataset):
@@ -20,7 +24,7 @@ class PlantDiseaseDataset(Dataset):
 
     Args:
         root_dir: Path to the dataset root directory.
-        transform: Optional transform to apply to images.
+        transform: Optional Albumentations Compose transform.
     """
 
     def __init__(self, root_dir: str, transform=None):
@@ -42,7 +46,10 @@ class PlantDiseaseDataset(Dataset):
 
         for cls in self.classes:
             cls_dir = os.path.join(self.root_dir, cls)
-            for fname in os.listdir(cls_dir):
+            for fname in sorted(os.listdir(cls_dir)):
+                ext = os.path.splitext(fname)[1].lower()
+                if ext not in VALID_IMAGE_EXTENSIONS:
+                    continue
                 fpath = os.path.join(cls_dir, fname)
                 if os.path.isfile(fpath):
                     self.samples.append((fpath, self.class_to_idx[cls]))
@@ -53,8 +60,15 @@ class PlantDiseaseDataset(Dataset):
     def __getitem__(self, idx):
         img_path, label = self.samples[idx]
         image = Image.open(img_path).convert("RGB")
+        image = np.array(image)  # HWC uint8 numpy array for Albumentations
 
         if self.transform:
-            image = self.transform(image)
+            image = self.transform(image=image)["image"]
 
         return image, label
+
+    def get_class_distribution(self) -> dict:
+        """Return a dict mapping class name → sample count."""
+        label_counts = Counter(label for _, label in self.samples)
+        idx_to_class = {v: k for k, v in self.class_to_idx.items()}
+        return {idx_to_class[idx]: count for idx, count in sorted(label_counts.items())}

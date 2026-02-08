@@ -16,6 +16,8 @@ env/
 # Data (large files, download separately)
 data/raw/
 data/processed/
+data/subset/
+data/organised/
 *.zip
 *.tar.gz
 *.tar
